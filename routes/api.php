@@ -29,8 +29,21 @@ Route::group(['middleware' => ['auth:sanctum', 'CekLevel::admin']], function () 
         return auth()->user();
     });
 
-    Route::resource('programs', App\Http\Controllers\API\ProgramController::class);
+    // Route::resource('programs', App\Http\Controllers\API\ProgramController::class);
 
     // API route for logout user
     Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
 });
+
+Route::group(['middleware' => ['auth:sanctum', 'CekLevelKonsumen::konsumen']], function () {
+    // Route::get('/profile', function (Request $request) {
+    //     return auth()->user();
+    // });
+
+    // Route::resource('programs', App\Http\Controllers\API\ProgramController::class);
+
+    // API route for logout user
+    Route::post('/logoutKonsumen', [App\Http\Controllers\API\AuthController::class, 'logout']);
+});
+
+Route::resource('programs', App\Http\Controllers\API\ProgramController::class);

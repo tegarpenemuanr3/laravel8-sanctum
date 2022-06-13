@@ -64,5 +64,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'CekLevel' => \App\Http\Middleware\CekLevel::class,
+        'CekLevelKonsumen' => \App\Http\Middleware\CekLevelKonsumen::class,
     ];
 }

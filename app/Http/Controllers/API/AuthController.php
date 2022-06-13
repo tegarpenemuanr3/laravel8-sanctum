@@ -62,6 +62,7 @@ class AuthController extends Controller
             'message' => 'Hi ' . $user->name . ', welcome to home',
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'data' => $user
         ]);
     }
 
