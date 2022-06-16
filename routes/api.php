@@ -41,6 +41,11 @@ Route::group(['middleware' => ['auth:sanctum', 'CekLevelKonsumen::konsumen']], f
     // });
 
     // Route::resource('programs', App\Http\Controllers\API\ProgramController::class);
+    Route::resource('menus', App\Http\Controllers\API\MenuController::class);
+    Route::post('/menus/{id}', [App\Http\Controllers\API\MenuController::class, 'update']);
+
+    Route::resource('keranjang', App\Http\Controllers\API\KeranjangController::class);
+    Route::post('/keranjang/{id}', [App\Http\Controllers\API\KeranjangController::class, 'update']);
 
     // API route for logout user
     Route::post('/logoutKonsumen', [App\Http\Controllers\API\AuthController::class, 'logout']);
