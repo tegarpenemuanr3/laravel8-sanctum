@@ -9,7 +9,7 @@ class Menu extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id',
+        'umkm_id',
         'menu_nama',
         'menu_foto',
         'menu_harga',

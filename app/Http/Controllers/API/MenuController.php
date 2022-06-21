@@ -53,7 +53,7 @@ class MenuController extends Controller
 
         try {
             $response = Menu::create([
-                'user_id' => $request->user_id,
+                'umkm_id' => $request->umkm_id,
                 'menu_nama' => $request->menu_nama,
                 'menu_foto' => $filename,
                 'menu_harga' => $request->menu_harga,

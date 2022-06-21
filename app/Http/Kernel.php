@@ -63,7 +63,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'CekLevel' => \App\Http\Middleware\CekLevel::class,
+        'CekLevelAdmin' => \App\Http\Middleware\CekLevelAdmin::class,
         'CekLevelKonsumen' => \App\Http\Middleware\CekLevelKonsumen::class,
+        'CekLevelUmkm' => \App\Http\Middleware\CekLevelUmkm::class,
     ];
 }

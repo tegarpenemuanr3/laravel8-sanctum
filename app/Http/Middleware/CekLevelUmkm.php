@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CekLevel
+class CekLevelUmkm
 {
     /**
      * Handle an incoming request.
@@ -18,12 +18,12 @@ class CekLevel
     public function handle(Request $request, Closure $next)
     {
         // return $next($request);
-        if (Auth::check() && Auth::user()->level == 'admin') {
+        if (Auth::check() && Auth::user()->role == 'umkm') {
             return $next($request);
         }
 
         return response()->json([
-            'message' => 'Anda Bukan Admin'
+            'message' => 'Anda Bukan Umkm'
         ]);
     }
 }
