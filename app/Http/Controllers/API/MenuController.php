@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Menu;
+use App\Models\umkm;
 use App\Http\Resources\MenuResource;
 use Illuminate\Support\Facades\File;
 
@@ -42,32 +43,52 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->hasFile('menu_foto')) {
-            $file = $request->file('menu_foto');
-            $extention = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $extention;
-            $file->move('uploads/menus/', $filename);
-        } else {
-            $filename = null;
-        }
+        $umkm = umkm::where('id', $request->umkm_id)->get();
 
-        try {
-            $response = Menu::create([
-                'umkm_id' => $request->umkm_id,
-                'menu_nama' => $request->menu_nama,
-                'menu_foto' => $filename,
-                'menu_harga' => $request->menu_harga,
-                'menu_ketersediaan' => $request->menu_ketersediaan,
-                'menu_deskripsi' => $request->menu_deskripsi,
-            ]);
+        if ($umkm[0]->umkm_status === "aktif") {
+            if ($request->hasFile('menu_foto')) {
+                $file = $request->file('menu_foto');
+                $extention = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extention;
+                $file->move('uploads/menus/', $filename);
+            } else {
+                $filename = null;
+            }
+
+            try {
+                $response = Menu::create([
+                    'umkm_id' => $request->umkm_id,
+                    'menu_nama' => $request->menu_nama,
+                    'menu_foto' => $filename,
+                    'menu_harga' => $request->menu_harga,
+                    'menu_ketersediaan' => $request->menu_ketersediaan,
+                    'menu_deskripsi' => $request->menu_deskripsi,
+                ]);
+                return response()->json([
+                    'message' => 'Data Berhasil Ditambahkan',
+                    'data' => $response
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Error',
+                    'errors' => $e->getMessage()
+                ], 422);
+            }
+        } else if ($umkm[0]->umkm_status === "review") {
             return response()->json([
-                'message' => 'Data Berhasil Ditambahkan',
-                'data' => $response
-            ]);
-        } catch (\Exception $e) {
+                'message' => 'Maaf Status UMKM Anda Masih review',
+            ], 422);
+        } else if ($umkm[0]->umkm_status === "blacklist") {
             return response()->json([
-                'message' => 'Error',
-                'errors' => $e->getMessage()
+                'message' => 'Maaf Status UMKM Anda dalam status blacklist',
+            ], 422);
+        } else if ($umkm[0]->umkm_status === "non aktif") {
+            return response()->json([
+                'message' => 'Maaf Status UMKM Anda dalam status non aktif',
+            ], 422);
+        } else if ($umkm[0]->umkm_status === "tolak") {
+            return response()->json([
+                'message' => 'Mohon maaf pengajuan UMKM Anda sementara kami tolak',
             ], 422);
         }
     }
@@ -131,6 +152,7 @@ class MenuController extends Controller
         try {
             Menu::where('id', $id)
                 ->update([
+                    'umkm_id' => $request->umkm_id,
                     'menu_nama' => $request->menu_nama,
                     'menu_foto' => $filename,
                     'menu_harga' => $request->menu_harga,
@@ -172,6 +194,37 @@ class MenuController extends Controller
             return response()->json([ //nilai balik
                 'message' => 'Error',
                 'errors' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function showMenuMe($id)
+    {
+        $menu = Menu::where('umkm_id', $id)->get();
+
+        if (is_null($menu)) {
+            return response()->json('Data not found', 404);
+        }
+        return response()->json([ //nilai balik
+            'message' => 'Data Berhasil Ditampilkan',
+            'errors' => $menu
+        ]);
+    }
+
+    public function searchMenu(Request $request)
+    {
+        $Menu = Menu::when($request->keyword, function ($query) use ($request) {
+            $query->where('menu_nama', 'like', "%{$request->keyword}%");
+        })->orderBy('menu_nama')->get();
+
+
+        if ($Menu->count() > 0) {
+            return response()->json([
+                'data' => $Menu
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Pencarian Tidak Ditemukan'
             ]);
         }
     }

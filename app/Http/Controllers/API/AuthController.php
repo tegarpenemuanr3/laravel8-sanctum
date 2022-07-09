@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Menu;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\MenuResource;
 
 class AuthController extends Controller
 {
@@ -82,5 +84,25 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'You have successfully logged out and the token was successfully deleted'
         ]);
+    }
+
+    public function getMenu()
+    {
+        $data = Menu::latest()->get();
+        return response()->json([
+            'message' => 'Berhasil Menampilkan Data',
+            'data' => $data
+        ]);
+    }
+
+    public function show($id)
+    {
+        $menu = Menu::find($id);
+        if (is_null($menu)) {
+            return response()->json('Data not found', 404);
+        }
+        return response()->json(
+            new MenuResource($menu)
+        );
     }
 }

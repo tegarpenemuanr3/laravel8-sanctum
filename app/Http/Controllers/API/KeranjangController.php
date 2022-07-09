@@ -6,9 +6,77 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\KeranjangResource;
 use Illuminate\Http\Request;
 use App\Models\Keranjang;
+use App\Models\umkm;
 
 class KeranjangController extends Controller
 {
+    //Di halaman Cart ditampilkan UMKMnya dulu berdasarkan produk yang ditambahkan ke keranjang untuk kemudahan proses transaksi
+    public function showUMKMCart($id = 8)
+    {
+        $users = Keranjang::where('user_id', $id)->get();
+        $data_uniq = $users->pluck("umkm_id")->unique()->values();
+        $data_uniq1 = $users->pluck("umkm_nama")->unique()->values();
+
+        $data_json = [];
+        for ($i = 0; $i < $data_uniq->count(); $i++) {
+            $data_json[] = [
+                'umkm_id' => $data_uniq[$i],
+                'umkm_nama' => $data_uniq1[$i],
+            ];
+        }
+
+        return response()->json([
+            'message' => 'Berhasil Menampilkan Data',
+            'data' => $data_json
+        ]);
+    }
+
+    //Ini dipake untuk di Keranjang Tampilkan Data UMKM - Keranjang
+    //=================================================
+    //id disini yaitu user_id 
+    public function showUMKMKeranjang($id = 8)
+    {
+        $users = Keranjang::where('user_id', $id)->get();
+        $data_uniq = $users->pluck("umkm_id")->unique()->values();
+        $data_uniq1 = $users->pluck("umkm_nama")->unique()->values();
+
+        $data_json = [];
+        for ($i = 0; $i < $data_uniq->count(); $i++) {
+            $data_json[] = [
+                'umkm_id' => $data_uniq[$i],
+                'umkm_nama' => $data_uniq1[$i],
+            ];
+        }
+
+        $result = array();
+        for ($i = 0; $i < $data_uniq1->count(); $i++) {
+            array_push($result, umkm::where('umkm_nama', $data_uniq1[$i])->first());
+        }
+
+        return response()->json([
+            'message' => 'Berhasil Menampilkan Data',
+            'data' => $result
+        ]);
+    }
+
+    //Ini dipake setelah klik dari Data UMKM di Keranjang atau ini adalah detail keranjang
+    //=================================================
+    //id disini yaitu umkm_id 
+    //$user_id diambil dari post yang datanya diambil dari Datastore
+    public function showProductUMKMKeranjang($id = 7)
+    {
+        //setelah tampilkan list UMKM 
+        //klik salah satu UMKM 
+        //Tampilkan data list produk UMKM yang masuk dalam keranjang
+        $user_id = 8;
+        $umkm_id = $id;
+        $result = Keranjang::where('umkm_id', $umkm_id)->where('user_id', $user_id)->get();
+        return response()->json([
+            'message' => 'Berhasil Menampilkan Data',
+            'data' => $result
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *

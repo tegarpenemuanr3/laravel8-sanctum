@@ -52,8 +52,7 @@ Route::group(['middleware' => ['auth:sanctum', 'CekLevelKonsumen::konsumen']], f
     // });
 
     // Route::resource('programs', App\Http\Controllers\API\ProgramController::class);
-    Route::post('/menus/{id}', [App\Http\Controllers\API\MenuController::class, 'update']);
-
+    Route::get('/menu/product/{menu_id}', [App\Http\Controllers\API\AuthController::class, 'show']);
     Route::resource('keranjang', App\Http\Controllers\API\KeranjangController::class);
     Route::post('/keranjang/{id}', [App\Http\Controllers\API\KeranjangController::class, 'update']);
 
@@ -70,10 +69,25 @@ Route::resource('admin', App\Http\Controllers\API\AdminController::class);
 Route::post('/admin/{id}', [App\Http\Controllers\API\AdminController::class, 'update']);
 
 Route::group(['middleware' => ['auth:sanctum', 'CekLevelUmkm::umkm']], function () {
-    Route::resource('menus', App\Http\Controllers\API\MenuController::class);
+    Route::post('/menus/{id}', [App\Http\Controllers\API\MenuController::class, 'update']);
+    Route::get('/menus/me/{id}', [App\Http\Controllers\API\MenuController::class, 'showMenuMe']);
 });
 
 Route::post('/umkm/register', [App\Http\Controllers\API\UmkmController::class, 'register']);
 Route::post('/umkm/login', [App\Http\Controllers\API\UmkmController::class, 'login']);
 Route::resource('umkm', App\Http\Controllers\API\UmkmController::class);
 Route::post('/umkm/{id}', [App\Http\Controllers\API\UmkmController::class, 'update']);
+
+Route::post('searchMenu', [App\Http\Controllers\API\MenuController::class, 'searchMenu']);
+
+
+
+Route::get('showUMKMCart', [App\Http\Controllers\API\KeranjangController::class, 'showUMKMCart']);
+Route::get('showUMKMKeranjang', [App\Http\Controllers\API\KeranjangController::class, 'showUMKMKeranjang']);
+Route::get('showProductUMKMKeranjang', [App\Http\Controllers\API\KeranjangController::class, 'showProductUMKMKeranjang']);
+
+
+
+//Menu
+Route::resource('menus', App\Http\Controllers\API\MenuController::class);
+Route::get('/menu/product', [App\Http\Controllers\API\AuthController::class, 'getMenu']);
